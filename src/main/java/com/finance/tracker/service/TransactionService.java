@@ -1,5 +1,7 @@
 package com.finance.tracker.service;
 
+import com.finance.tracker.dto.TransactionRequestDTO;
+import com.finance.tracker.dto.TransactionResponseDTO;
 import com.finance.tracker.entity.Category;
 import com.finance.tracker.entity.Transaction;
 import com.finance.tracker.entity.User;
@@ -20,21 +22,27 @@ public class TransactionService {
     private final UserRepository userRepository;
 
 
-    public Transaction createTransaction(Long userId, Long categoryId, double amount, String type){
-        User user = userRepository.findById(userId)
+    public TransactionResponseDTO createTransaction(TransactionRequestDTO dto){
+        User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found."));
 
         Transaction transaction = new Transaction();
 
-        transaction.setAmount(amount);
-        transaction.setType(type);
+        transaction.setAmount(dto.getAmount());
+        transaction.setType(dto.getType());
         transaction.setUser(user);
         transaction.setCategory(category);
         transaction.setDate(LocalDate.now());
 
-        return transactionRepository.save(transaction);
+        Transaction saved = transactionRepository.save(transaction);
+        return new TransactionResponseDTO(
+                saved.getId(),
+                saved.getAmount(),
+                saved.getType(),
+                saved.getCategory().getName()
+        );
     }
 }
