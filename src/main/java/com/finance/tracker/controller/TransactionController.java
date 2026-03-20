@@ -16,7 +16,7 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<Transaction> createTraction(
             @RequestParam Long userId,
-            @RequestBody Long categoryId,
+            @RequestParam Long categoryId,
             @RequestParam double amount,
             @RequestParam String type
     ){
