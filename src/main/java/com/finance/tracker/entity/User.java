@@ -1,5 +1,6 @@
 package com.finance.tracker.entity;
 
+import com.finance.tracker.config.SecurityConfig;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,4 +51,6 @@ public class User implements UserDetails {
     public boolean isEnabled(){
         return true;
     }
+
 }
+
