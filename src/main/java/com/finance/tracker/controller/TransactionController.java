@@ -29,11 +29,13 @@ public class TransactionController {
     public ResponseEntity<Page<TransactionResponseDTO>> getUserTransactions(
             Authentication authentication,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam( required = false) String type,
+            @RequestParam( required = false) String category
             ) {
         String username = authentication.getName();
         return ResponseEntity.ok(
-                transactionService.getUserTransactionsByUsername(username, page, size)
+                transactionService.getTransactions(username, page, size, type, category)
         );
     }
 

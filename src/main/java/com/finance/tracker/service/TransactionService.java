@@ -45,17 +45,29 @@ public class TransactionService {
         );
     }
 
-    public Page<TransactionResponseDTO> getUserTransactionsByUsername(
+    public Page<TransactionResponseDTO> getTransactions(
             String username,
             int page,
-            int size){
+            int size,
+            String type,
+            String category){
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Transaction> transactions = transactionRepository.findByUser(user, pageable);
+        Page<Transaction> transactions;
+
+        if (type != null && category != null){
+            transactions = transactionRepository.findByUserAndTypeIgnoreCaseAndCategory_NameIgnoreCase(user, type, category, pageable);
+        }else if (type != null){
+            transactions = transactionRepository.findByUserAndTypeIgnoreCase(user, type, pageable);
+        }else if(category != null){
+            transactions = transactionRepository.findByUserAndCategory_NameIgnoreCase(user, category, pageable);
+        }else{
+            transactions = transactionRepository.findByUser(user, pageable);
+        }
 
         return transactions.map( t -> new TransactionResponseDTO(
                         t.getId(),
@@ -64,6 +76,7 @@ public class TransactionService {
                         t.getCategory().getName()
                         ));
     }
+
 
     public SummaryDTO getSummary(Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found."));
